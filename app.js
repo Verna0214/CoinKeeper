@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const handlebars = require('express-handlebars')
 
+require('./config/mongoose')
 const routes = require('./routes')
 const app = express()
 const port = process.env.PORT
