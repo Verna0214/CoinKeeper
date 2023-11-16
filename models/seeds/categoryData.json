@@ -1,0 +1,10 @@
+{
+  "results":
+  [
+    { "name": "家居物業", "icon": "bi bi-house"},
+    { "name": "交通出行", "icon": "bi bi-bus-front"},
+    { "name": "休閒娛樂", "icon": "bi bi-joystick"},
+    { "name": "餐飲食品", "icon": "bi bi-cup-straw"},
+    { "name": "其他", "icon": "bi bi-pencil"}
+  ]
+}
