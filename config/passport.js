@@ -15,7 +15,7 @@ passport.use(new LocalStrategy(
     if (!user) {
       return done(null, false)
     }
-    const passwordMatch = bcrypt.compareSync(passport, user.password)
+    const passwordMatch = bcrypt.compareSync(password, user.password)
     if (!passwordMatch) {
       return done(null, false)
     }
@@ -31,9 +31,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   const user = await Users.findById(id)
-  console.log(user)
-  console.log('toJSON:', user.toJSON())
-  done(null, user.toJSON())
+  done(null, user)
 })
 
 module.exports = passport

@@ -30,6 +30,9 @@ const userController = {
     } catch (err) {
       console.error(err)
     }
+  },
+  signIn: (req, res) => {
+    return res.redirect('/records')
   }
 }
 
