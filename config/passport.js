@@ -13,11 +13,11 @@ passport.use(new LocalStrategy(
   async (req, email, password, done) => {
     const user = await Users.findOne({ email })
     if (!user) {
-      return done(null, false)
+      return done(null, false, req.flash('error_messages', 'Please create an account first！'))
     }
     const passwordMatch = bcrypt.compareSync(password, user.password)
     if (!passwordMatch) {
-      return done(null, false)
+      return done(null, false, req.flash('error_messages', 'Password is not correct！'))
     }
 
     return done(null, user)

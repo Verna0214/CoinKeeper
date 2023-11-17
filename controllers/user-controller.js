@@ -8,31 +8,32 @@ const userController = {
   signInPage: (req, res) => {
     return res.render('signin')
   },
-  signUp: async (req, res) => {
+  signUp: async (req, res, next) => {
     try {
       const { name, email, password, passwordConfirm } = req.body
-      if (password !== passwordConfirm) {
-        console.info('Passwords do not match!')
-        return res.redirect('/signup')
-      }
+      if (password !== passwordConfirm) throw new Error('Passwords do not match！')
       const user = await Users.findOne({ email })
-      if (user) {
-        console.info('User had an account already!')
-        return res.redirect('/signin')
-      }
+      if (user) throw new Error('User had an account already！')
 
       await Users.create({
         name,
         email,
         password: bcrypt.hashSync(password, 10)
       })
+      req.flash('success_messages', 'Successfully create an account！')
       res.redirect('/signin')
     } catch (err) {
-      console.error(err)
+      next(err)
     }
   },
   signIn: (req, res) => {
+    req.flash('success_messages', 'Successfully login！')
     return res.redirect('/records')
+  },
+  logout: (req, res) => {
+    req.flash('success_messages', 'Successfully logout！')
+    req.logout()
+    res.redirect('/signin')
   }
 }
 
