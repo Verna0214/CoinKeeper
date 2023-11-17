@@ -13,7 +13,7 @@ db.on('error', () => {
 
 db.once('open', async () => {
   try {
-    await Promise.all(categoryData.map(async (item) => {
+    await Promise.all(categoryData.map(async item => {
       await Categories.create({
         name: item.name,
         icon: item.icon

@@ -18,7 +18,7 @@ db.on('error', () => {
 db.once('open', async () => {
   try {
     const categories = await Categories.find({})
-    const users = await Promise.all(userData.map(async (user) => {
+    const users = await Promise.all(userData.map(async user => {
       return await Users.create({
         name: user.name,
         email: user.email,
