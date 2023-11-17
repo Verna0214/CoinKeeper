@@ -30,7 +30,7 @@ passport.serializeUser((user, done) => {
 })
 
 passport.deserializeUser(async (id, done) => {
-  const user = await Users.findById(id)
+  const user = await Users.findById(id).lean()
   done(null, user)
 })
 

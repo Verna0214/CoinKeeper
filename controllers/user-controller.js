@@ -27,7 +27,7 @@ const userController = {
     }
   },
   signIn: (req, res) => {
-    req.flash('success_messages', 'Successfully login！')
+    req.flash('success_messages', 'Hi, Welcome back！Keep your money everyday！')
     return res.redirect('/records')
   },
   logout: (req, res) => {
