@@ -1,6 +1,6 @@
 {{> header}}
 {{> messages}}
-<div class="container fluid my-4" style="width: 75%;">
+<div class="container fluid my-4" style="width: 70%;">
   <ul class="navbar-nav ms-auto mb-2 mb-md-0">
     <li class="nav-item">
       <a href="/records/new"><button class="btn btn-warning my-sm-0 my-2 me-2">Create</button></a>
@@ -40,7 +40,11 @@
         <td class="text-success-emphasis">{{ dateFormat this.date }}</td>
         <td class="text-success-emphasis"><strong>{{this.amount}}</strong></td>
         <td><a href="/records/{{this._id}}/edit"><i class="fa-solid fa-pen-to-square text-info"></i></a></td>
-        <td><i class="fa-solid fa-trash text-danger"></i></td>
+        <form action="/records/{{this._id}}?_method=DELETE" method="POST" style="display: inline;">
+          <td>
+            <button class="p-0 m-0" type="submit" style="border: none; background: none;" onclick="return confirm(`確定要刪除「{{this.name}}」這筆支出嗎？`)"><i class="fa-solid fa-trash text-danger"></i></button>
+          </td>
+        </form>
       </tr>
       {{/each}}
     </tbody>

@@ -86,6 +86,15 @@ const recordController = {
     } catch (err) {
       next(err)
     }
+  },
+  deleteRecord: async (req, res, next) => {
+    try {
+      await Records.findOneAndDelete({ _id: req.params.id, userId: req.user._id })
+      req.flash('success_messages', 'Delete the record successfully！')
+      res.redirect('/records')
+    } catch (err) {
+      next(err)
+    }
   }
 }
 
