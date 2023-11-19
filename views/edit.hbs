@@ -3,7 +3,7 @@
 <div class="container fluid my-4" style="width: 70%;">
   <h1 class="text-center text-info">Edit your record</h1>
   {{> messages}}
-  <form class="form-create mx-auto mt-5" action="/records" method="PUT" style="width: 80%;">
+  <form class="form-create mx-auto mt-5" action="/records/{{record._id}}?_method=PUT" method="POST" style="width: 80%;">
     {{> recordForms}}
   </form>
 </div>

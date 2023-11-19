@@ -9,6 +9,7 @@ const { generalErrorHandler } = require('../middleware/error-handler')
 
 router.get('/records/:id/edit', authenticator, recordController.editPage)
 router.get('/records/new', authenticator, recordController.createPage)
+router.put('/records/:id', authenticator, recordController.putRecord)
 router.post('/records', authenticator, recordController.postRecord)
 router.get('/signup', userController.signUpPage)
 router.post('/signup', userController.signUp)

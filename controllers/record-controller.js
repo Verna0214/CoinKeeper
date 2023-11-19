@@ -51,14 +51,38 @@ const recordController = {
   editPage: async (req, res, next) => {
     try {
       const [record, categories] = await Promise.all([
-        Records.findOne({ _id: req.params.id }).populate('categoryId').lean(),
+        Records.findOne({ _id: req.params.id, userId: req.user._id }).populate('categoryId').lean(),
         Categories.find({}).lean()
       ])
+      if (!record) throw new Error("Record didn't exist！")
+
       const categoryId = record.categoryId._id.toString()
       const categoryIdToString = categories.map(category => ({ ...category, _id: category._id.toString() }))
       const date = (dayjs(record.date).format('YYYY-MM-DD'))
 
       res.render('edit', { record, categories: categoryIdToString, categoryId, date })
+    } catch (err) {
+      next(err)
+    }
+  },
+  putRecord: async (req, res, next) => {
+    try {
+      const userId = req.user._id
+      const { record, date, categoryId, amount } = req.body
+      if (!record || !date || !categoryId || !amount) throw new Error('Please fill out these field！')
+
+      await Records.findOneAndUpdate(
+        { _id: req.params.id, userId },
+        {
+          name: record,
+          date,
+          amount,
+          userId,
+          categoryId
+        }
+      )
+      req.flash('success_messages', 'Edit the record successfully！')
+      res.redirect('/records')
     } catch (err) {
       next(err)
     }
