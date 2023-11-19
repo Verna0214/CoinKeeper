@@ -19,6 +19,33 @@ const recordController = {
     } catch (err) {
       next(err)
     }
+  },
+  createRecordPage: async (req, res, next) => {
+    try {
+      const categories = await Categories.find({}).lean()
+      return res.render('new', { categories })
+    } catch (err) {
+      next(err)
+    }
+  },
+  postRecord: async (req, res, next) => {
+    try {
+      const userId = req.user._id
+      const { record, date, categoryId, amount } = req.body
+      if (!record || !date || !categoryId || !amount) throw new Error('Please fill out these field！')
+
+      await Records.create({
+        name: record,
+        date,
+        amount,
+        userId,
+        categoryId
+      })
+      req.flash('success_messages', 'Congratulations！Create a new record.')
+      res.redirect('/records')
+    } catch (err) {
+      next(err)
+    }
   }
 }
 

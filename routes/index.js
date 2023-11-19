@@ -7,6 +7,8 @@ const recordController = require('../controllers/record-controller')
 const { authenticator } = require('../middleware/auth')
 const { generalErrorHandler } = require('../middleware/error-handler')
 
+router.get('/records/new', authenticator, recordController.createRecordPage)
+router.post('/records', authenticator, recordController.postRecord)
 router.get('/signup', userController.signUpPage)
 router.post('/signup', userController.signUp)
 router.get('/signin', userController.signInPage)
