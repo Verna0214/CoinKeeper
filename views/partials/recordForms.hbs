@@ -1,23 +1,27 @@
 <div class="form-group mb-3">
   <i class="fa-solid fa-pen mb-2"></i>
   <div class="form-floating mb-3">
-    <input type="text" class="form-control" id="record" name="record" placeholder="Record" required>
+    <input type="text" class="form-control" id="record" name="record" placeholder="Record" value="{{record.name}}" required>
     <label for="record">Record</label>
   </div>
   <i class="fa-solid fa-calendar-days mb-2"></i>
   <div class="form-floating mb-3">
-    <input type="date" class="form-control" id="date" name="date" required>
+    <input type="date" class="form-control" id="date" name="date" value="{{date}}" required>
     <label for="date">Date</label>
   </div>
   <i class="fa-solid fa-filter mb-2"></i>
   <select class="form-select mb-3" name="categoryId" id="categoryId" style="height: 3.2em;">
     {{#each categories}}
-    <option value="{{this._id}}">{{this.name}}</option>
+    <option value="{{this._id}}" {{#ifCond this._id ../categoryId}}selected{{/ifCond}}>{{this.name}}</option>
     {{/each}}
   </select>
   <i class="fa-solid fa-sack-dollar mb-2"></i>
   <div class="form-floating mb-4">
-    <input type="amount" class="form-control" id="amount" name="amount" placeholder="$$" autocomplete="off" required>
+    <input type="amount" class="form-control" id="amount" name="amount" placeholder="$$" autocomplete="off" value="{{record.amount}}" required>
     <label for="amount">Amount</label>
   </div>
+</div>
+<div class="d-flex justify-content-center">
+  <a class="btn btn-outline-dark me-3" href="javascript:history.back()">Back</a>
+  <button class="btn btn-secondary btn-inline" type="submit">Submit</button>
 </div>

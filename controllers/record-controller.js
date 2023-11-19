@@ -1,5 +1,6 @@
 const Records = require('../models/record')
 const Categories = require('../models/category')
+const dayjs = require('dayjs')
 
 const recordController = {
   getRecords: async (req, res, next) => {
@@ -20,7 +21,7 @@ const recordController = {
       next(err)
     }
   },
-  createRecordPage: async (req, res, next) => {
+  createPage: async (req, res, next) => {
     try {
       const categories = await Categories.find({}).lean()
       return res.render('new', { categories })
@@ -43,6 +44,21 @@ const recordController = {
       })
       req.flash('success_messages', 'Congratulations！Create a new record.')
       res.redirect('/records')
+    } catch (err) {
+      next(err)
+    }
+  },
+  editPage: async (req, res, next) => {
+    try {
+      const [record, categories] = await Promise.all([
+        Records.findOne({ _id: req.params.id }).populate('categoryId').lean(),
+        Categories.find({}).lean()
+      ])
+      const categoryId = record.categoryId._id.toString()
+      const categoryIdToString = categories.map(category => ({ ...category, _id: category._id.toString() }))
+      const date = (dayjs(record.date).format('YYYY-MM-DD'))
+
+      res.render('edit', { record, categories: categoryIdToString, categoryId, date })
     } catch (err) {
       next(err)
     }

@@ -39,7 +39,7 @@
         <td class="text-success-emphasis" style="width: 35%;">{{this.name}}</td>
         <td class="text-success-emphasis">{{ dateFormat this.date }}</td>
         <td class="text-success-emphasis"><strong>{{this.amount}}</strong></td>
-        <td><i class="fa-solid fa-pen-to-square text-info"></i></td>
+        <td><a href="/records/{{this._id}}/edit"><i class="fa-solid fa-pen-to-square text-info"></i></a></td>
         <td><i class="fa-solid fa-trash text-danger"></i></td>
       </tr>
       {{/each}}
