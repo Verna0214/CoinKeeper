@@ -6,17 +6,30 @@ const recordController = {
   getRecords: async (req, res, next) => {
     try {
       const categoryId = req.query.categoryId || null
+      const selectDate = req.query.selectDate || null
       const userId = req.user._id
-      const query = categoryId === null ? { userId } : { userId, categoryId }
+      const query = { userId }
 
-      const [categories, records] = await Promise.all([
+      if (categoryId !== null) {
+        query.categoryId = categoryId
+      }
+      if (selectDate !== null) {
+        const start = dayjs(selectDate).startOf('month').toDate()
+        const end = dayjs(selectDate).endOf('month').toDate()
+        query.date = { $gte: start, $lt: end }
+      }
+
+      const [categories, records, allRecords] = await Promise.all([
         Categories.find({}).lean(),
-        Records.find(query).populate('categoryId').sort({ date: 'desc' }).lean()
+        Records.find(query).populate('categoryId').sort({ date: 'desc' }).lean(),
+        Records.find({ userId }).sort({ date: 'desc' }).lean()
       ])
+
       const totalAmount = records.reduce((total, record) => total + Number(record.amount), 0).toLocaleString()
       const categoryIdToString = categories.map(category => ({ ...category, _id: category._id.toString() }))
+      const dateArr = new Set(allRecords.map(record => dayjs(record.date).format('YYYY-MM')))
 
-      res.render('records', { totalAmount, categories: categoryIdToString, records, categoryId })
+      res.render('records', { totalAmount, categories: categoryIdToString, records, categoryId, dateArr, selectDate })
     } catch (err) {
       next(err)
     }
