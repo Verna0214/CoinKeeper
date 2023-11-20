@@ -5,5 +5,8 @@ module.exports = {
   dateFormat: date => dayjs(date).format('YYYY-MM-DD'),
   ifCond: function (a, b, options) {
     return a === b ? options.fn(this) : options.inverse(this)
+  },
+  json: data => {
+    return JSON.stringify(data)
   }
 }

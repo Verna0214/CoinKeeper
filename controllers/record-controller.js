@@ -108,6 +108,44 @@ const recordController = {
     } catch (err) {
       next(err)
     }
+  },
+  chartPage: async (req, res, next) => {
+    try {
+      const selectDate = req.query.selectDate || null
+      const userId = req.user._id
+      const query = { userId }
+
+      if (selectDate !== null) {
+        const start = dayjs(selectDate).startOf('month').toDate()
+        const end = dayjs(selectDate).endOf('month').toDate()
+        query.date = { $gte: start, $lt: end }
+      }
+
+      const [categories, records, allRecords] = await Promise.all([
+        Categories.find({}).lean(),
+        Records.find(query).populate('categoryId').sort({ date: 'desc' }).lean(),
+        Records.find({ userId }).sort({ date: 'desc' }).lean()
+      ])
+
+      const totalAmount = records.reduce((total, record) => total + Number(record.amount), 0).toLocaleString()
+      const categoryName = categories.map(category => category.name)
+      const dateArr = new Set(allRecords.map(record => dayjs(record.date).format('YYYY-MM')))
+      const categorySum = []
+
+      for (let i = 0; i < categoryName.length; i++) {
+        let sum = 0
+        for (let j = 0; j < records.length; j++) {
+          if (records[j].categoryId.name === categoryName[i]) {
+            sum += records[j].amount
+          }
+        }
+        categorySum.push(sum)
+      }
+
+      res.render('chart', { totalAmount, categories: categoryName, dateArr, selectDate, categorySum })
+    } catch (err) {
+      next(err)
+    }
   }
 }
 
