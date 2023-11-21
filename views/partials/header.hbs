@@ -1,7 +1,7 @@
 <header>
-  <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark px-4">
+  <nav class="navbar navbar-expand-lg fixed-top bg-primary px-4">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/"><i class="fa-solid fa-money-check-dollar me-3"></i>{{#if user}}{{user.name}}'s{{/if}} Coin Keeper</a>
+      <a class="navbar-brand" href="/" style="color: aliceblue;"><i class="fa-solid fa-money-check-dollar me-3" style="color: aliceblue;"></i>{{#if user}}{{user.name}}'s{{/if}} Coin Keeper</a>
       {{#if user}}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
           aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -13,7 +13,7 @@
               <span class="text-white nav-link">{{user.email}}</span>
             </li>
             <li class="nav-item">
-              <a href="/logout"><button class="btn btn-outline-success my-sm-0 my-2">Logout</button></a>
+              <a href="/logout"><button class="btn btn-light my-sm-0 my-2">Logout</button></a>
             </li>
           </ul>
         </div>

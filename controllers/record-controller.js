@@ -1,5 +1,6 @@
 const Records = require('../models/record')
 const Categories = require('../models/category')
+const { calculateSum, dateRange, categoryIdToString, dateData, calculateCategorySum } = require('../helpers/data-helpers')
 const dayjs = require('dayjs')
 
 const recordController = {
@@ -14,9 +15,7 @@ const recordController = {
         query.categoryId = categoryId
       }
       if (selectDate !== null) {
-        const start = dayjs(selectDate).startOf('month').toDate()
-        const end = dayjs(selectDate).endOf('month').toDate()
-        query.date = { $gte: start, $lt: end }
+        query.date = dateRange(selectDate)
       }
 
       const [categories, records, allRecords] = await Promise.all([
@@ -25,11 +24,11 @@ const recordController = {
         Records.find({ userId }).sort({ date: 'desc' }).lean()
       ])
 
-      const totalAmount = records.reduce((total, record) => total + Number(record.amount), 0).toLocaleString()
-      const categoryIdToString = categories.map(category => ({ ...category, _id: category._id.toString() }))
-      const dateArr = new Set(allRecords.map(record => dayjs(record.date).format('YYYY-MM')))
+      const totalAmount = calculateSum(records)
+      const categoriesArr = categoryIdToString(categories)
+      const dateArr = dateData(allRecords)
 
-      res.render('records', { totalAmount, categories: categoryIdToString, records, categoryId, dateArr, selectDate })
+      res.render('records', { totalAmount, categories: categoriesArr, records, categoryId, dateArr, selectDate })
     } catch (err) {
       next(err)
     }
@@ -55,6 +54,7 @@ const recordController = {
         userId,
         categoryId
       })
+
       req.flash('success_messages', 'Congratulations！Create a new record.')
       res.redirect('/records')
     } catch (err) {
@@ -63,29 +63,33 @@ const recordController = {
   },
   editPage: async (req, res, next) => {
     try {
+      const _id = req.params.id
+      const userId = req.user._id
+
       const [record, categories] = await Promise.all([
-        Records.findOne({ _id: req.params.id, userId: req.user._id }).populate('categoryId').lean(),
+        Records.findOne({ _id, userId }).populate('categoryId').lean(),
         Categories.find({}).lean()
       ])
       if (!record) throw new Error("Record didn't exist！")
 
       const categoryId = record.categoryId._id.toString()
-      const categoryIdToString = categories.map(category => ({ ...category, _id: category._id.toString() }))
       const date = (dayjs(record.date).format('YYYY-MM-DD'))
+      const categoriesArr = categoryIdToString(categories)
 
-      res.render('edit', { record, categories: categoryIdToString, categoryId, date })
+      res.render('edit', { record, categories: categoriesArr, categoryId, date })
     } catch (err) {
       next(err)
     }
   },
   putRecord: async (req, res, next) => {
     try {
+      const _id = req.params.id
       const userId = req.user._id
       const { record, date, categoryId, amount } = req.body
       if (!record || !date || !categoryId || !amount) throw new Error('Please fill out these field！')
 
       await Records.findOneAndUpdate(
-        { _id: req.params.id, userId },
+        { _id, userId },
         {
           name: record,
           date,
@@ -102,7 +106,11 @@ const recordController = {
   },
   deleteRecord: async (req, res, next) => {
     try {
-      await Records.findOneAndDelete({ _id: req.params.id, userId: req.user._id })
+      const _id = req.params.id
+      const userId = req.user._id
+
+      await Records.findOneAndDelete({ _id, userId })
+
       req.flash('success_messages', 'Delete the record successfully！')
       res.redirect('/records')
     } catch (err) {
@@ -116,9 +124,7 @@ const recordController = {
       const query = { userId }
 
       if (selectDate !== null) {
-        const start = dayjs(selectDate).startOf('month').toDate()
-        const end = dayjs(selectDate).endOf('month').toDate()
-        query.date = { $gte: start, $lt: end }
+        query.date = dateRange(selectDate)
       }
 
       const [categories, records, allRecords] = await Promise.all([
@@ -127,20 +133,10 @@ const recordController = {
         Records.find({ userId }).sort({ date: 'desc' }).lean()
       ])
 
-      const totalAmount = records.reduce((total, record) => total + Number(record.amount), 0).toLocaleString()
+      const totalAmount = calculateSum(records)
       const categoryName = categories.map(category => category.name)
-      const dateArr = new Set(allRecords.map(record => dayjs(record.date).format('YYYY-MM')))
-      const categorySum = []
-
-      for (let i = 0; i < categoryName.length; i++) {
-        let sum = 0
-        for (let j = 0; j < records.length; j++) {
-          if (records[j].categoryId.name === categoryName[i]) {
-            sum += records[j].amount
-          }
-        }
-        categorySum.push(sum)
-      }
+      const dateArr = dateData(allRecords)
+      const categorySum = calculateCategorySum(categoryName, records)
 
       res.render('chart', { totalAmount, categories: categoryName, dateArr, selectDate, categorySum })
     } catch (err) {
