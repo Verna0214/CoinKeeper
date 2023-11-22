@@ -64,24 +64,17 @@ passport.use(new FacebookStrategy(
   },
   async (req, accessToken, refreshToken, profile, done) => {
     try {
-      console.log(profile)
       const { email, name } = profile._json
-      console.log(email)
-      console.log(name)
       const user = await Users.findOne({ email })
       if (!user) {
-        console.log('no user')
         const randomPassword = Math.random().toString(36).slice(-8)
         const newUser = await Users.create({
           name,
           email,
           password: bcrypt.hashSync(randomPassword, 10)
         })
-        console.log(newUser)
         return done(null, newUser)
       }
-      console.log('has user')
-      console.log(user)
       return done(null, user)
     } catch (err) {
       done(err, false)
