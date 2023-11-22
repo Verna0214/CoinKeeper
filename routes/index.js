@@ -4,9 +4,12 @@ const router = express.Router()
 const passport = require('../config/passport')
 const userController = require('../controllers/user-controller')
 const recordController = require('../controllers/record-controller')
+const auth = require('./modules/auth')
+
 const { authenticator } = require('../middleware/auth')
 const { generalErrorHandler } = require('../middleware/error-handler')
 
+router.use('/auth', auth)
 router.get('/records/chart', authenticator, recordController.chartPage)
 router.get('/records/new', authenticator, recordController.createPage)
 router.get('/records/:id/edit', authenticator, recordController.editPage)

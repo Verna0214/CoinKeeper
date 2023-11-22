@@ -1,9 +1,10 @@
 const passport = require('passport')
-const LocalStrategy = require('passport-local')
+const LocalStrategy = require('passport-local').Strategy
+const GoogleStrategy = require('passport-google-oauth20').Strategy
 const bcrypt = require('bcryptjs')
 const Users = require('../models/user')
 
-// set up passport strategy
+// set up passport LocalStrategy
 passport.use(new LocalStrategy(
   {
     usernameField: 'email',
@@ -21,6 +22,34 @@ passport.use(new LocalStrategy(
     }
 
     return done(null, user)
+  }
+))
+
+// set up passport GoogleStrategy
+passport.use(new GoogleStrategy(
+  {
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK,
+    scope: ['email', 'profile']
+  },
+  async (req, accessToken, refreshToken, profile, done) => {
+    try {
+      const { email, name } = profile._json
+      const user = await Users.findOne({ email })
+      if (!user) {
+        const randomPassword = Math.random().toString(36).slice(-8)
+        const newUser = await Users.create({
+          name,
+          email,
+          password: bcrypt.hashSync(randomPassword, 10)
+        })
+        return done(null, newUser)
+      }
+      return done(null, user)
+    } catch (err) {
+      done(err, false)
+    }
   }
 ))
 
