@@ -12,7 +12,7 @@
 # limitations under the License.
 
 # [START gae_quickstart_yaml]
-runtime: nodejs16
+runtime: nodejs20
 env_variables:
   GOOGLE_CLIENT_ID: "554393113554-ufcsjc75slufaj8ncq8ch5ketpnli6hg.apps.googleusercontent.com"
   GOOGLE_CLIENT_SECRET: "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"
