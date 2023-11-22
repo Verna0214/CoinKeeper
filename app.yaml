@@ -14,10 +14,10 @@
 # [START gae_quickstart_yaml]
 runtime: nodejs16
 env_variables:
-  GOOGLE_CLIENT_ID: 554393113554-ufcsjc75slufaj8ncq8ch5ketpnli6hg.apps.googleusercontent.com
-  GOOGLE_CLIENT_SECRET: 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
-  GOOGLE_CALLBACK: https://amiable-parser-405803.de.r.appspot.com/auth/google/callback
-  MONGODB_URI: mongodb+srv://yuhsichen0214:JtWEh6xw3yzeaDqm@cluster0.bsrca6p.mongodb.net/coin_keeper?retryWrites=true&w=majority
-  SESSION_SECRET: This is my dog
+  GOOGLE_CLIENT_ID: "554393113554-ufcsjc75slufaj8ncq8ch5ketpnli6hg.apps.googleusercontent.com"
+  GOOGLE_CLIENT_SECRET: "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"
+  GOOGLE_CALLBACK: "https://amiable-parser-405803.de.r.appspot.com/auth/google/callback"
+  MONGODB_URI: "mongodb+srv://yuhsichen0214:JtWEh6xw3yzeaDqm@cluster0.bsrca6p.mongodb.net/coin_keeper?retryWrites=true&w=majority"
+  SESSION_SECRET: "This is my dog"
 
 # [END gae_quickstart_yaml]
