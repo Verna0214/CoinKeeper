@@ -1,6 +1,7 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy
+const FacebookStrategy = require('passport-facebook')
 const bcrypt = require('bcryptjs')
 const Users = require('../models/user')
 
@@ -46,6 +47,41 @@ passport.use(new GoogleStrategy(
         })
         return done(null, newUser)
       }
+      return done(null, user)
+    } catch (err) {
+      done(err, false)
+    }
+  }
+))
+
+// set up passport FacebookStrategy
+passport.use(new FacebookStrategy(
+  {
+    clientID: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    callbackURL: process.env.FACEBOOK_CALLBACK,
+    profileFields: ['email', 'displayName']
+  },
+  async (req, accessToken, refreshToken, profile, done) => {
+    try {
+      console.log(profile)
+      const { email, name } = profile._json
+      console.log(email)
+      console.log(name)
+      const user = await Users.findOne({ email })
+      if (!user) {
+        console.log('no user')
+        const randomPassword = Math.random().toString(36).slice(-8)
+        const newUser = await Users.create({
+          name,
+          email,
+          password: bcrypt.hashSync(randomPassword, 10)
+        })
+        console.log(newUser)
+        return done(null, newUser)
+      }
+      console.log('has user')
+      console.log(user)
       return done(null, user)
     } catch (err) {
       done(err, false)
